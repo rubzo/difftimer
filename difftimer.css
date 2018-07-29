@@ -3,7 +3,7 @@
   position: relative;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 48px;
+  font-size: 128px;
   font-family: sans-serif;
 }
 
@@ -29,6 +29,12 @@
     box-sizing: border-box;
 }
 
+.equal-player {
+    height: 10%;
+    background: black;
+    box-sizing: border-box;
+}
+
 .behind-player {
     height: 10%;
     background: red;
@@ -46,4 +52,20 @@ html, body {
     height: 100%;
     padding: 0;
     margin: 0;
+}
+
+.start-button {
+	height: 20%;
+	background: black;
+	box-sizing: border-box;
+	color: white;
+	font-size: 72px;
+}
+
+.intro-view {
+	display: block;
+}
+
+.timer-view {
+	display: none;
 }
