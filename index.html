@@ -19,7 +19,7 @@
 
 			<div class="differential">
 				<div id="diff-timer" class="text">
-					+ 00:00
+					00:00
 				</div>
 			</div>
 
@@ -79,7 +79,10 @@ let dstate = dstates.not_ready;
 let diff_limit_ms = 0;
 let player1_time = 0;
 let player2_time = 0;
+let current_differential = 0;
 let last_check_time = null;
+
+let setinterval_handle = null;
 
 let intro_view = null;
 let timer_view = null;
@@ -90,10 +93,57 @@ let div_player2_warning = null
 let div_diff_timer = null
 let div_player1_time = null;
 let div_player2_time = null;
-
+let div_differential = null;
 
 function show_players_equal() {
+	div_player1_warning.classList = [];
+	div_player1_warning.classList.add("equal-player");
+	div_player1_warning.children[0].innerHTML = "";
+	div_player2_warning.classList = [];
+	div_player2_warning.classList.add("equal-player");
+	div_player2_warning.children[0].innerHTML = "";
+}
 
+function show_player1_behind() {
+	div_player1_warning.classList = [];
+	div_player1_warning.classList.add("behind-player");
+	div_player1_warning.children[0].innerHTML = "▲▲▲▲▲";
+	div_player2_warning.classList = [];
+	div_player2_warning.classList.add("ahead-player");
+	div_player2_warning.children[0].innerHTML = "";
+}
+
+function show_player2_behind() {
+	div_player1_warning.classList = [];
+	div_player1_warning.classList.add("ahead-player");
+	div_player1_warning.children[0].innerHTML = "";
+	div_player2_warning.classList = [];
+	div_player2_warning.classList.add("behind-player");
+	div_player2_warning.children[0].innerHTML = "▼▼▼▼▼";
+}
+
+function show_player1_lost() {
+	if (tstate == tstates.player1_active) {
+		div_player1_button.classList.remove("active-player");
+		div_player2_button.classList.remove("waiting-player");
+	} else if (tstate == tstates.player2_active) {
+		div_player1_button.classList.remove("waiting-player");
+		div_player2_button.classList.remove("active-player");
+	}
+	div_player1_button.classList.add("lost-player");
+	div_player2_button.classList.add("won-player");
+}
+
+function show_player2_lost() {
+	if (tstate == tstates.player1_active) {
+		div_player1_button.classList.remove("active-player");
+		div_player2_button.classList.remove("waiting-player");
+	} else if (tstate == tstates.player2_active) {
+		div_player1_button.classList.remove("waiting-player");
+		div_player2_button.classList.remove("active-player");
+	}
+	div_player1_button.classList.add("won-player");
+	div_player2_button.classList.add("lost-player");
 }
 
 function convert_ms_to_minsec_string(t) {
@@ -106,6 +156,7 @@ function convert_ms_to_minsec_string(t) {
 function update_time_display() {
 	div_player1_time.innerHTML = convert_ms_to_minsec_string(player1_time);
 	div_player2_time.innerHTML = convert_ms_to_minsec_string(player2_time);
+	div_diff_timer.innerHTML = convert_ms_to_minsec_string(Math.abs(current_differential)) + " (0" + (diff_limit_ms / 60000) + ":00)";
 }
 
 function update_times() {
@@ -126,6 +177,27 @@ function update_times() {
 		player2_time += time_delta;
 	}
 
+	current_differential = player1_time - player2_time;
+
+	if (current_differential < -500) {
+		if (Math.abs(current_differential) > diff_limit_ms) {
+			change_dstate(dstates.player2_lost);
+			change_tstate(tstates.times_up);
+		} else if (dstate != dstates.player2_behind) {
+			change_dstate(dstates.player2_behind);
+		}
+	} else if (current_differential > 500) {
+		if (Math.abs(current_differential) > diff_limit_ms) {
+			change_dstate(dstates.player1_lost);
+			change_tstate(tstates.times_up);
+		} else if (dstate != dstates.player1_behind) {
+			change_dstate(dstates.player1_behind);
+		}
+	} else {
+		change_dstate(dstates.players_equal);
+	}
+
+
 	update_time_display();
 }
 
@@ -137,6 +209,7 @@ function change_tstate(target_state) {
 		div_player1_button.classList.remove("waiting-player");
 		div_player2_button.classList.add("waiting-player");
 		div_player1_button.classList.add("active-player");
+		div_differential.classList.add("upside-down");
 		// TODO: sound
 		update_times();
 	} else if (target_state == tstates.player2_active) {
@@ -144,15 +217,19 @@ function change_tstate(target_state) {
 		div_player2_button.classList.remove("waiting-player");
 		div_player1_button.classList.add("waiting-player");
 		div_player2_button.classList.add("active-player");
+		div_differential.classList.remove("upside-down");
 		// TODO: sound
 		update_times();
 	} else if (target_state == tstates.times_up) {
-
+		div_differential.classList.remove("differential");
+		div_differential.classList.add("differential-game-over");
+		clearInterval(setinterval_handle);
+		// TODO: sound
 	}
 	// Check if state _was_ waiting for first move
 	// If so, kick off the timer.
 	if (tstate == tstates.waiting_for_first_move) {
-		setInterval(update_times, 200);
+		setinterval_handle = setInterval(update_times, 200);
 	}
 	tstate = target_state;
 }
@@ -160,6 +237,14 @@ function change_tstate(target_state) {
 function change_dstate(target_state) {
 	if (target_state == dstates.players_equal) {
 		show_players_equal();
+	} else if (target_state == dstates.player1_behind) {
+		show_player1_behind();
+	} else if (target_state == dstates.player2_behind) {
+		show_player2_behind();
+	} else if (target_state == dstates.player1_lost) {
+		show_player1_lost();
+	} else if (target_state == dstates.player2_lost) {
+		show_player2_lost();
 	}
 	dstate = target_state;
 }
@@ -213,6 +298,7 @@ function initial_setup() {
 	div_diff_timer = document.getElementById("diff-timer");
 	div_player1_time = document.getElementById("player1-time");
 	div_player2_time = document.getElementById("player2-time");
+	div_differential = document.getElementsByClassName("differential")[0];
 };
 
 window.onload = initial_setup;

@@ -17,6 +17,18 @@
     box-sizing: border-box;
 }
 
+.lost-player {
+    height: 30%;
+    background: red;
+    box-sizing: border-box;
+}
+
+.won-player {
+    height: 30%;
+    background: green;
+    box-sizing: border-box;
+}
+
 .active-player {
     height: 30%;
     background: #ef912d;
@@ -44,6 +56,13 @@
 .differential {
     height: 20%;
     background: black;
+    box-sizing: border-box;
+    color: white;
+}
+
+.differential-game-over {
+    height: 20%;
+    background: red;
     box-sizing: border-box;
     color: white;
 }
