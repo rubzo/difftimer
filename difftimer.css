@@ -12,79 +12,79 @@
 }
 
 .waiting-player {
-    height: 30%;
-    background: #515151;
-    box-sizing: border-box;
+  height: 30%;
+  background: #515151;
+  box-sizing: border-box;
 }
 
 .lost-player {
-    height: 30%;
-    background: red;
-    box-sizing: border-box;
+  height: 30%;
+  background: red;
+  box-sizing: border-box;
 }
 
 .won-player {
-    height: 30%;
-    background: green;
-    box-sizing: border-box;
+  height: 30%;
+  background: green;
+  box-sizing: border-box;
 }
 
 .active-player {
-    height: 30%;
-    background: #ef912d;
-    box-sizing: border-box;
+  height: 30%;
+  background: #ef912d;
+  box-sizing: border-box;
 }
 
 .ahead-player {
-    height: 10%;
-    background: green;
-    box-sizing: border-box;
+  height: 10%;
+  background: green;
+  box-sizing: border-box;
 }
 
 .equal-player {
-    height: 10%;
-    background: black;
-    box-sizing: border-box;
+  height: 10%;
+  background: black;
+  box-sizing: border-box;
 }
 
 .behind-player {
-    height: 10%;
-    background: red;
-    box-sizing: border-box;
+  height: 10%;
+  background: red;
+  box-sizing: border-box;
 }
 
 .differential {
-    height: 20%;
-    background: black;
-    box-sizing: border-box;
-    color: white;
+  height: 20%;
+  background: black;
+  box-sizing: border-box;
+  color: white;
 }
 
 .differential-game-over {
-    height: 20%;
-    background: red;
-    box-sizing: border-box;
-    color: white;
+  height: 20%;
+  background: red;
+  box-sizing: border-box;
+  color: white;
 }
 
 html, body {
-    height: 100%;
-    padding: 0;
-    margin: 0;
+  height: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .start-button {
-	height: 20%;
-	background: black;
-	box-sizing: border-box;
-	color: white;
-	font-size: 72px;
+  height: 20%;
+  background: black;
+  box-sizing: border-box;
+  color: white;
+  font-size: 72px;
 }
 
 .intro-view {
-	display: block;
+  display: block;
 }
 
 .timer-view {
-	display: none;
+  display: none;
 }
