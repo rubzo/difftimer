@@ -99,7 +99,7 @@ function convert_ms_to_minsec_string(t) {
 function update_time_display() {
   div_player1_time.innerHTML = convert_ms_to_minsec_string(player1_time);
   div_player2_time.innerHTML = convert_ms_to_minsec_string(player2_time);
-  div_diff_timer.innerHTML = convert_ms_to_minsec_string(Math.abs(current_differential)) + " (0" + (diff_limit_ms / 60000) + ":00)";
+  div_diff_timer.innerHTML = convert_ms_to_minsec_string(Math.abs(current_differential)) + " (" + convert_ms_to_minsec_string(diff_limit_ms) + ")";
 }
 
 function update_times() {
@@ -139,7 +139,6 @@ function update_times() {
   } else {
     change_dstate(dstates.players_equal);
   }
-
 
   update_time_display();
 }
@@ -192,8 +191,8 @@ function change_dstate(target_state) {
   dstate = target_state;
 }
 
-function prepare_timer(limit) {
-  diff_limit_ms = parseInt(limit) * 60000;
+function prepare_timer(limit_s) {
+  diff_limit_ms = parseInt(limit_s) * 1000;
   change_tstate(tstates.waiting_for_first_move);
   change_dstate(dstates.players_equal);
 
@@ -202,8 +201,9 @@ function prepare_timer(limit) {
 }
 
 function start_button_listener(e) {
-  let limit = e.currentTarget.id.slice(0, 1);
-  prepare_timer(limit);
+  let id_string = e.currentTarget.id;
+  let limit_s = id_string.slice(8);
+  prepare_timer(limit_s);
 };
 
 function player_button_listener(player_id) {
@@ -229,8 +229,9 @@ function player2_button_listener(e) {
 function initial_setup() {
   intro_view = document.getElementsByClassName("intro-view")[0];
   timer_view = document.getElementsByClassName("timer-view")[0];
-  for (let i = 0; i < intro_view.children.length; i++) {
-    intro_view.children[i].addEventListener("click", start_button_listener);
+  let button_container = intro_view.children[1];
+  for (let i = 0; i < button_container.children.length; i++) {
+    button_container.children[i].addEventListener("click", start_button_listener);
   };
   div_player1_button = document.getElementById("player1-button");
   div_player1_button.addEventListener("click", player1_button_listener);
