@@ -1,9 +1,10 @@
 let tstates = {
-  not_ready: 1,
-  waiting_for_first_move: 2,
-  player1_active: 3,
-  player2_active: 4,
-  times_up: 5
+  select_delta: 1,
+  select_max: 2,
+  waiting_for_first_move: 3,
+  player1_active: 4,
+  player2_active: 5,
+  times_up: 6
 };
 
 let dstates = {
@@ -14,12 +15,15 @@ let dstates = {
   player2_behind: 5,
   player2_very_behind: 6,
   player1_lost: 7,
-  player2_lost: 8
+  player2_lost: 8,
+  players_drew: 9
 };
 
-let tstate = tstates.not_ready;
+let tstate = tstates.select_delta;
 let dstate = dstates.not_ready;
 let diff_limit_ms = 0;
+let max_limit_ms = 0;
+let no_max = false;
 let player1_time = 0;
 let player2_time = 0;
 let current_differential = 0;
@@ -27,8 +31,9 @@ let last_check_time = null;
 
 let setinterval_handle = null;
 
-let intro_view = null;
-let timer_view = null;
+let div_menu_select_delta = null;
+let div_menu_select_max = null;
+let div_timer_view = null;
 let div_player1_button = null;
 let div_player2_button = null;
 let div_player1_warning = null
@@ -65,7 +70,7 @@ function show_player2_behind() {
   div_player2_warning.children[0].innerHTML = "▼▼▼▼▼";
 }
 
-function show_player1_lost() {
+function clear_current_player_button_state() {
   if (tstate == tstates.player1_active) {
     div_player1_button.classList.remove("active-player");
     div_player2_button.classList.remove("waiting-player");
@@ -73,19 +78,23 @@ function show_player1_lost() {
     div_player1_button.classList.remove("waiting-player");
     div_player2_button.classList.remove("active-player");
   }
+}
+
+function show_player1_lost() {
+  clear_current_player_button_state();
   div_player1_button.classList.add("lost-player");
   div_player2_button.classList.add("won-player");
 }
 
 function show_player2_lost() {
-  if (tstate == tstates.player1_active) {
-    div_player1_button.classList.remove("active-player");
-    div_player2_button.classList.remove("waiting-player");
-  } else if (tstate == tstates.player2_active) {
-    div_player1_button.classList.remove("waiting-player");
-    div_player2_button.classList.remove("active-player");
-  }
+  clear_current_player_button_state();
   div_player1_button.classList.add("won-player");
+  div_player2_button.classList.add("lost-player");
+}
+
+function show_players_drew() {
+  clear_current_player_button_state();
+  div_player1_button.classList.add("lost-player");
   div_player2_button.classList.add("lost-player");
 }
 
@@ -120,6 +129,15 @@ function update_times() {
     player2_time += time_delta;
   }
 
+  // Check for a draw
+  if (!no_max && (player1_time + player2_time) > max_limit_ms) {
+    update_time_display();
+    // Unfortunately currently these states must be changed in this order
+    change_dstate(dstates.players_drew);
+    change_tstate(tstates.times_up);
+    return;
+  }
+
   current_differential = player1_time - player2_time;
 
   if (current_differential < -500) {
@@ -144,8 +162,16 @@ function update_times() {
 }
 
 function change_tstate(target_state) {
-  if (target_state == tstates.waiting_for_first_move) {
-
+  if (target_state == tstates.select_max) {
+    div_menu_select_delta.classList.remove("visible");
+    div_menu_select_delta.classList.add("hidden");
+    div_menu_select_max.classList.remove("hidden");
+    div_menu_select_max.classList.add("visible");
+  } else if (target_state == tstates.waiting_for_first_move) {
+    div_menu_select_max.classList.remove("visible");
+    div_menu_select_max.classList.add("hidden");
+    div_timer_view.classList.remove("hidden");
+    div_timer_view.classList.add("visible");
   } else if (target_state == tstates.player1_active) {
     div_player2_button.classList.remove("active-player");
     div_player1_button.classList.remove("waiting-player");
@@ -187,23 +213,29 @@ function change_dstate(target_state) {
     show_player1_lost();
   } else if (target_state == dstates.player2_lost) {
     show_player2_lost();
+  } else if (target_state == dstates.players_drew) {
+    show_players_drew();
   }
   dstate = target_state;
 }
 
-function prepare_timer(limit_s) {
-  diff_limit_ms = parseInt(limit_s) * 1000;
+function delta_button_listener(e) {
+  let id_string = e.currentTarget.id;
+  let delta_secs = id_string.slice(11);
+  diff_limit_ms = parseInt(delta_secs) * 1000;
+  change_tstate(tstates.select_max);
+};
+
+function max_button_listener(e) {
+  let id_string = e.currentTarget.id;
+  if (id_string == "max-mins-unlimited") {
+    no_max = true;
+  } else {
+    let max_mins = id_string.slice(9);
+    max_limit_ms = parseInt(max_mins) * 60000;
+  }
   change_tstate(tstates.waiting_for_first_move);
   change_dstate(dstates.players_equal);
-
-  intro_view.style.display = "none";
-  timer_view.style.display = "block";
-}
-
-function start_button_listener(e) {
-  let id_string = e.currentTarget.id;
-  let limit_s = id_string.slice(8);
-  prepare_timer(limit_s);
 };
 
 function player_button_listener(player_id) {
@@ -226,13 +258,21 @@ function player2_button_listener(e) {
   player_button_listener(2);
 }
 
-function initial_setup() {
-  intro_view = document.getElementsByClassName("intro-view")[0];
-  timer_view = document.getElementsByClassName("timer-view")[0];
-  let button_container = intro_view.children[1];
-  for (let i = 0; i < button_container.children.length; i++) {
-    button_container.children[i].addEventListener("click", start_button_listener);
+function add_listeners_to_child_buttons(div, listener) {
+  let container = div.getElementsByClassName("button-container")[0];
+  for (let i = 0; i < container.children.length; i++) {
+    container.children[i].addEventListener("click", listener);
   };
+}
+
+function initial_setup() {
+  div_timer_view = document.getElementById("timer-view");
+
+  div_menu_select_delta = document.getElementById("menu-select-delta");
+  add_listeners_to_child_buttons(div_menu_select_delta, delta_button_listener);
+  div_menu_select_max = document.getElementById("menu-select-max");
+  add_listeners_to_child_buttons(div_menu_select_max, max_button_listener);
+
   div_player1_button = document.getElementById("player1-button");
   div_player1_button.addEventListener("click", player1_button_listener);
   div_player2_button = document.getElementById("player2-button");

@@ -96,12 +96,13 @@
   font-size: 72px;
 }
 
-.intro-view {
+.visible {
   height: 100%;
   display: block;
 }
 
-.timer-view {
+.hidden {
+  height: 0%;
   display: none;
 }
 

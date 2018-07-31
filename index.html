@@ -4,7 +4,57 @@
     <link rel="stylesheet" type="text/css" href="difftimer.css">
   </head>
   <body>
-    <div class="timer-view">
+    <div class="visible" id="menu-select-delta">
+      <div class="menu-title">
+        <div class="text text-regular">
+          A player should lose if they fall behind by how long?
+        </div>
+      </div>
+      <div class="button-container">
+        <div class="button" id="delta-secs-15">
+          <div class="text text-large">15 secs</div>
+        </div>
+        <div class="button" id="delta-secs-30">
+          <div class="text text-large">30 secs</div>
+        </div>
+        <div class="button" id="delta-secs-60">
+          <div class="text text-large">1 min</div>
+        </div>
+        <div class="button" id="delta-secs-120">
+          <div class="text text-large">2 mins</div>
+        </div>
+        <div class="button" id="delta-secs-180">
+          <div class="text text-large">3 mins</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden" id="menu-select-max">
+      <div class="menu-title">
+        <div class="text text-regular">
+          The game will be drawn after how long?
+        </div>
+      </div>
+      <div class="button-container">
+        <div class="button" id="max-mins-10">
+          <div class="text text-large">10 mins</div>
+        </div>
+        <div class="button" id="max-mins-15">
+          <div class="text text-large">15 mins</div>
+        </div>
+        <div class="button" id="max-mins-20">
+          <div class="text text-large">20 mins</div>
+        </div>
+        <div class="button" id="max-mins-25">
+          <div class="text text-large">25 mins</div>
+        </div>
+        <div class="button" id="max-mins-unlimited">
+          <div class="text text-large">Unlimited</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden" id="timer-view">
       <div id="player1-button" class="waiting-player upside-down">
         <div id="player1-time" class="text text-large">
           00:00
@@ -32,29 +82,6 @@
       <div id="player2-button" class="waiting-player">
         <div id="player2-time" class="text text-large">
           00:00
-        </div>
-      </div>
-    </div>
-
-    <div class="intro-view">
-      <div class="menu-title">
-        <div class="text text-regular">A player should lose if they fall behind by what?</div>
-      </div>
-      <div class="button-container">
-        <div class="button" id="diffsecs15">
-          <div class="text text-large">15 secs</div>
-        </div>
-        <div class="button" id="diffsecs30">
-          <div class="text text-large">30 secs</div>
-        </div>
-        <div class="button" id="diffsecs60">
-          <div class="text text-large">1 min</div>
-        </div>
-        <div class="button" id="diffsecs120">
-          <div class="text text-large">2 mins</div>
-        </div>
-        <div class="button" id="diffsecs180">
-          <div class="text text-large">3 mins</div>
         </div>
       </div>
     </div>
