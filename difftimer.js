@@ -108,7 +108,9 @@ function convert_ms_to_minsec_string(t) {
 function update_time_display() {
   div_player1_time.innerHTML = convert_ms_to_minsec_string(player1_time);
   div_player2_time.innerHTML = convert_ms_to_minsec_string(player2_time);
-  div_diff_timer.innerHTML = convert_ms_to_minsec_string(Math.abs(current_differential)) + " (" + convert_ms_to_minsec_string(diff_limit_ms) + ")";
+  let diff_string = convert_ms_to_minsec_string(Math.abs(current_differential)) + " (" + convert_ms_to_minsec_string(diff_limit_ms) + ")";
+  div_diff_timer1.innerHTML = diff_string;
+  div_diff_timer2.innerHTML = diff_string;
 }
 
 function update_times() {
@@ -177,7 +179,6 @@ function change_tstate(target_state) {
     div_player1_button.classList.remove("waiting-player");
     div_player2_button.classList.add("waiting-player");
     div_player1_button.classList.add("active-player");
-    div_differential.classList.add("upside-down");
     // TODO: sound
     update_times();
   } else if (target_state == tstates.player2_active) {
@@ -185,7 +186,6 @@ function change_tstate(target_state) {
     div_player2_button.classList.remove("waiting-player");
     div_player1_button.classList.add("waiting-player");
     div_player2_button.classList.add("active-player");
-    div_differential.classList.remove("upside-down");
     // TODO: sound
     update_times();
   } else if (target_state == tstates.times_up) {
@@ -279,7 +279,8 @@ function initial_setup() {
   div_player2_button.addEventListener("click", player2_button_listener);
   div_player1_warning = document.getElementById("player1-warning");
   div_player2_warning = document.getElementById("player2-warning");
-  div_diff_timer = document.getElementById("diff-timer");
+  div_diff_timer1 = document.getElementById("diff-timer1");
+  div_diff_timer2 = document.getElementById("diff-timer2");
   div_player1_time = document.getElementById("player1-time");
   div_player2_time = document.getElementById("player2-time");
   div_differential = document.getElementsByClassName("differential")[0];

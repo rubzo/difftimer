@@ -67,6 +67,11 @@
   color: white;
 }
 
+.inside-differential {
+  height: 50%;
+  box-sizing: border-box;
+}
+
 .differential-game-over {
   height: 20%;
   background: red;
@@ -107,6 +112,7 @@
 }
 
 html, body {
+  background: black;
   height: 100%;
   padding: 0;
   margin: 0;
