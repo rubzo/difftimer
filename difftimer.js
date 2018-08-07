@@ -105,12 +105,32 @@ function convert_ms_to_minsec_string(t) {
   return (mins < 10 ? "0" : "" ) + mins + ":" + (secs < 10 ? "0" : "" ) + secs;
 }
 
+function is_player1_behind() {
+  return dstate == dstates.player1_behind || dstate == dstates.player1_lost;
+}
+
+function is_player2_behind() {
+  return dstate == dstates.player2_behind || dstate == dstates.player2_lost;
+}
+
 function update_time_display() {
   div_player1_time.innerHTML = convert_ms_to_minsec_string(player1_time);
   div_player2_time.innerHTML = convert_ms_to_minsec_string(player2_time);
   let diff_string = convert_ms_to_minsec_string(Math.abs(current_differential)) + " (" + convert_ms_to_minsec_string(diff_limit_ms) + ")";
-  div_diff_timer1.innerHTML = diff_string;
-  div_diff_timer2.innerHTML = diff_string;
+  let diff_sign1 = "";
+  if (is_player1_behind()) {
+    diff_sign1 = "+";
+  } else if (is_player2_behind()) {
+    diff_sign1 = "-";
+  }
+  let diff_sign2 = "";
+  if (is_player1_behind()) {
+    diff_sign2 = "-";
+  } else if (is_player2_behind()) {
+    diff_sign2 = "+";
+  }
+  div_diff_timer1.innerHTML = diff_sign1 + diff_string;
+  div_diff_timer2.innerHTML = diff_sign2 + diff_string;
 }
 
 function update_times() {

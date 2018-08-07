@@ -7,11 +7,19 @@
 }
 
 .text-large {
-  font-size: 128px;
+  font-size: 6em;
 }
 
 .text-regular {
-  font-size: 72px;
+  font-size: 4em;
+}
+
+.text-elapsed-time {
+  font-size: 4em;
+}
+
+.text-delta-time {
+  font-size: 8em;
 }
 
 .upside-down {
@@ -67,11 +75,6 @@
   color: white;
 }
 
-.inside-differential {
-  height: 50%;
-  box-sizing: border-box;
-}
-
 .differential-game-over {
   height: 20%;
   background: red;
@@ -84,8 +87,7 @@
   background: grey;
   box-sizing: border-box;
   color: white;
-  font-size: 48px;
-  padding: 16px;
+  padding: 1em;
 }
 
 .button-container {
@@ -98,7 +100,6 @@
   background: black;
   box-sizing: border-box;
   color: white;
-  font-size: 72px;
 }
 
 .visible {
