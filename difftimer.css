@@ -1,3 +1,7 @@
+div {
+  box-sizing: border-box;
+}
+
 .text {
   text-align: center;
   position: relative;
@@ -26,79 +30,75 @@
   transform:rotate(-180deg);
 }
 
+.player-box {
+  height: 30%;
+  background: #000000;
+  padding: 1em;
+}
+
 .waiting-player {
-  height: 30%;
+  border-radius: 4em;
+  height: 100%;
   background: #515151;
-  box-sizing: border-box;
-}
-
-.lost-player {
-  height: 30%;
-  background: red;
-  box-sizing: border-box;
-}
-
-.won-player {
-  height: 30%;
-  background: green;
-  box-sizing: border-box;
 }
 
 .active-player {
-  height: 30%;
+  border-radius: 4em;
+  height: 100%;
   background: #ef912d;
-  box-sizing: border-box;
+}
+
+.lost-player {
+  height: 100%;
+  background: red;
+}
+
+.won-player {
+  height: 100%;
+  background: green;
 }
 
 .ahead-player {
   height: 10%;
   background: green;
-  box-sizing: border-box;
 }
 
 .equal-player {
   height: 10%;
   background: black;
-  box-sizing: border-box;
 }
 
 .behind-player {
   height: 10%;
   background: red;
-  box-sizing: border-box;
 }
 
 .differential {
   height: 20%;
   background: black;
-  box-sizing: border-box;
   color: white;
 }
 
 .differential-game-over {
   height: 20%;
   background: red;
-  box-sizing: border-box;
   color: white;
 }
 
 .menu-title {
   height: 20%;
   background: grey;
-  box-sizing: border-box;
   color: white;
   padding: 1em;
 }
 
 .button-container {
   height: 80%;
-  box-sizing: border-box;
 }
 
 .button {
   height: 20%;
   background: black;
-  box-sizing: border-box;
   color: white;
 }
 
