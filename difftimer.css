@@ -102,13 +102,13 @@ div {
   padding: 2em;
 }
 
-.restart-button {
+#restart-button {
   border-radius: 2em;
   height: 100%;
   background: #222222;
 }
 
-.pause-button {
+#pause-button {
   border-radius: 2em;
   height: 100%;
   background: #222222;

@@ -41,6 +41,8 @@ let div_player2_warning = null
 let div_diff_timer = null
 let div_player1_time = null;
 let div_player2_time = null;
+let div_restart_button = null;
+let div_pause_button = null;
 
 function show_players_equal() {
   div_player1_warning.classList = [];
@@ -275,6 +277,14 @@ function player2_button_listener(e) {
   player_button_listener(2);
 }
 
+function restart_button_listener(e) {
+  location.reload();
+}
+
+function pause_button_listener(e) {
+
+}
+
 function add_listeners_to_child_buttons(div, listener) {
   let container = div.getElementsByClassName("button-container")[0];
   for (let i = 0; i < container.children.length; i++) {
@@ -300,6 +310,10 @@ function initial_setup() {
   div_diff_timer2 = document.getElementById("diff-timer2");
   div_player1_time = document.getElementById("player1-time");
   div_player2_time = document.getElementById("player2-time");
+  div_restart_button = document.getElementById("restart-button");
+  div_restart_button.addEventListener("click", restart_button_listener);
+  div_pause_button = document.getElementById("pause-button");
+  div_pause_button.addEventListener("click", pause_button_listener);
 };
 
 window.onload = initial_setup;
