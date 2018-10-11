@@ -41,7 +41,6 @@ let div_player2_warning = null
 let div_diff_timer = null
 let div_player1_time = null;
 let div_player2_time = null;
-let div_differential = null;
 
 function show_players_equal() {
   div_player1_warning.classList = [];
@@ -209,8 +208,6 @@ function change_tstate(target_state) {
     // TODO: sound
     update_times();
   } else if (target_state == tstates.times_up) {
-    div_differential.classList.remove("differential");
-    div_differential.classList.add("differential-game-over");
     clearInterval(setinterval_handle);
     // TODO: sound
   }
@@ -303,7 +300,6 @@ function initial_setup() {
   div_diff_timer2 = document.getElementById("diff-timer2");
   div_player1_time = document.getElementById("player1-time");
   div_player2_time = document.getElementById("player2-time");
-  div_differential = document.getElementsByClassName("differential")[0];
 };
 
 window.onload = initial_setup;

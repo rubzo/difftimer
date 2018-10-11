@@ -10,6 +10,14 @@ div {
   font-family: sans-serif;
 }
 
+.control-button-text {
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14em;
+}
+
 .text-large {
   font-size: 6em;
 }
@@ -49,11 +57,13 @@ div {
 }
 
 .lost-player {
+  border-radius: 4em;
   height: 100%;
   background: red;
 }
 
 .won-player {
+  border-radius: 4em;
   height: 100%;
   background: green;
 }
@@ -73,16 +83,35 @@ div {
   background: red;
 }
 
-.differential {
+.control-area {
   height: 20%;
   background: black;
-  color: white;
 }
 
-.differential-game-over {
-  height: 20%;
-  background: red;
-  color: white;
+.restart-container {
+  float: left;
+  height: 100%;
+  width: 50%;
+  padding: 2em;
+}
+
+.pause-container {
+  float: right;
+  height: 100%;
+  width: 50%;
+  padding: 2em;
+}
+
+.restart-button {
+  border-radius: 2em;
+  height: 100%;
+  background: #222222;
+}
+
+.pause-button {
+  border-radius: 2em;
+  height: 100%;
+  background: #222222;
 }
 
 .menu-title {
