@@ -58,7 +58,11 @@ let div_ids_to_preload = [
   "player1-time",
   "player2-time",
   "restart-button",
-  "pause-button"
+  "pause-button",
+  "sound-tock",
+  "sound-times-up",
+  "sound-pause",
+  "sound-unpause"
 ];
 let ds = {};
 
@@ -232,11 +236,11 @@ function unpause() {
 //
 function change_tstate(target_state) {
   if (target_state == tstates.paused) {
-    // TODO: sound
     pause();
+    ds["sound-pause"].play();
   } else if (tstate == tstates.paused) {
-    // TODO: sound
     unpause();
+    ds["sound-unpause"].play();
   } else if (target_state == tstates.select_max) {
     hide(ds["menu-select-delta"]);
     reveal(ds["menu-select-max"]);
@@ -248,18 +252,18 @@ function change_tstate(target_state) {
     ds["player1-button"].classList.remove("waiting-player");
     ds["player2-button"].classList.add("waiting-player");
     ds["player1-button"].classList.add("active-player");
-    // TODO: sound
+    ds["sound-tock"].play();
     update_times();
   } else if (target_state == tstates.player2_active) {
     ds["player1-button"].classList.remove("active-player");
     ds["player2-button"].classList.remove("waiting-player");
     ds["player1-button"].classList.add("waiting-player");
     ds["player2-button"].classList.add("active-player");
-    // TODO: sound
+    ds["sound-tock"].play();
     update_times();
   } else if (target_state == tstates.times_up) {
     clearInterval(setinterval_handle);
-    // TODO: sound
+    ds["sound-times-up"].play();
   }
   // Check if state _was_ waiting for first move
   // If so, kick off the timer.
@@ -360,6 +364,10 @@ function initial_setup() {
   ds["player2-button"].addEventListener("click", player2_button_listener);
   ds["restart-button"].addEventListener("click", restart_button_listener);
   ds["pause-button"].addEventListener("click", pause_button_listener);
+  ds["sound-tock"].load();
+  ds["sound-times-up"].load();
+  ds["sound-pause"].load();
+  ds["sound-unpause"].load();
 };
 
 window.onload = initial_setup;
