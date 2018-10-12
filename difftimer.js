@@ -7,7 +7,8 @@ let tstates = {
   waiting_for_first_move: 3,
   player1_active: 4,
   player2_active: 5,
-  times_up: 6
+  times_up: 6,
+  paused: 7
 };
 
 //
@@ -215,11 +216,28 @@ function update_times() {
   update_time_display();
 }
 
+function pause() {
+  update_times();
+  clearInterval(setinterval_handle);
+}
+
+function unpause() {
+  setinterval_handle = setInterval(update_times, 200);
+  let d = new Date();
+  last_check_time = d.getTime();
+}
+
 //
 // State changers.
 //
 function change_tstate(target_state) {
-  if (target_state == tstates.select_max) {
+  if (target_state == tstates.paused) {
+    // TODO: sound
+    pause();
+  } else if (tstate == tstates.paused) {
+    // TODO: sound
+    unpause();
+  } else if (target_state == tstates.select_max) {
     hide(ds["menu-select-delta"]);
     reveal(ds["menu-select-max"]);
   } else if (target_state == tstates.waiting_for_first_move) {
@@ -317,7 +335,11 @@ function restart_button_listener(e) {
 }
 
 function pause_button_listener(e) {
-
+  if (tstate == tstates.player1_active || tstate == tstates.player2_active) {
+    change_tstate(tstates.paused);
+  } else if (tstate == tstates.paused) {
+    change_tstate(prev_tstate);
+  }
 }
 
 //
