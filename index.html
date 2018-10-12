@@ -4,7 +4,23 @@
     <link rel="stylesheet" type="text/css" href="difftimer.css">
   </head>
   <body>
-    <div class="visible" id="menu-select-delta">
+    <div class="visible" id="intro-screen">
+      <div class="menu-title" style="height: 20%">
+        <div class="text text-regular">
+          Differential Hive Timer<br/>(Report bugs to Stephen Kyle!)
+        </div>
+      </div>
+      <div class="button-container" style="height: 80%">
+        <div class="button" id="intro-select-custom" style="height: 50%">
+          <div class="text text-large">Choose your own custom settings...</div>
+        </div>
+        <div class="button" id="intro-select-tournament" style="height: 50%">
+          <div class="text text-large">Start with tournament settings selected (3mins, unlimited)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden" id="menu-select-delta">
       <div class="menu-title">
         <div class="text text-regular">
           A player will lose if they fall behind by how long?

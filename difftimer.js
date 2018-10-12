@@ -2,13 +2,14 @@
 // tstate: Timer State
 //
 let tstates = {
-  select_delta: 1,
-  select_max: 2,
-  waiting_for_first_move: 3,
-  player1_active: 4,
-  player2_active: 5,
-  times_up: 6,
-  paused: 7
+  at_intro: 1,
+  select_delta: 2,
+  select_max: 3,
+  waiting_for_first_move: 4,
+  player1_active: 5,
+  player2_active: 6,
+  times_up: 7,
+  paused: 8
 };
 
 //
@@ -29,7 +30,7 @@ let dstates = {
 //
 // Our global state.
 //
-let tstate = tstates.select_delta;
+let tstate = tstates.at_intro;
 let dstate = dstates.not_ready;
 let prev_tstate = null;
 let prev_dstate = null;
@@ -46,6 +47,7 @@ let setinterval_handle = null;
 
 // References to divs we need to preload so we can change them dynamically.
 let div_ids_to_preload = [
+  "intro-screen",
   "menu-select-delta",
   "menu-select-max",
   "timer-view",
@@ -241,10 +243,15 @@ function change_tstate(target_state) {
   } else if (tstate == tstates.paused) {
     unpause();
     ds["sound-unpause"].play();
+  } else if (target_state == tstates.select_delta) {
+    hide(ds["intro-screen"]);
+    reveal(ds["menu-select-delta"]);
   } else if (target_state == tstates.select_max) {
     hide(ds["menu-select-delta"]);
     reveal(ds["menu-select-max"]);
   } else if (target_state == tstates.waiting_for_first_move) {
+    hide(ds["intro-screen"]);
+    hide(ds["menu-select-delta"]);
     hide(ds["menu-select-max"]);
     reveal(ds["timer-view"]);
   } else if (target_state == tstates.player1_active) {
@@ -295,6 +302,18 @@ function change_dstate(target_state) {
 //
 // Button listeners.
 //
+function intro_button_listener(e) {
+  let id_string = e.currentTarget.id;
+  if (id_string == "intro-select-custom") {
+    change_tstate(tstates.select_delta);
+  } else if (id_string == "intro-select-tournament") {
+    diff_limit_ms = 180 * 1000;
+    no_max = true;
+    change_tstate(tstates.waiting_for_first_move);
+    change_dstate(dstates.players_equal);
+  }
+};
+
 function delta_button_listener(e) {
   let id_string = e.currentTarget.id;
   let delta_secs = id_string.slice(11);
@@ -358,6 +377,7 @@ function add_listeners_to_child_buttons(div, listener) {
 
 function initial_setup() {
   preload_divs();
+  add_listeners_to_child_buttons(ds["intro-screen"], intro_button_listener);
   add_listeners_to_child_buttons(ds["menu-select-delta"], delta_button_listener);
   add_listeners_to_child_buttons(ds["menu-select-max"], max_button_listener);
   ds["player1-button"].addEventListener("click", player1_button_listener);
