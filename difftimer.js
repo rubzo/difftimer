@@ -28,6 +28,157 @@ let dstates = {
 };
 
 //
+// Telemetry object
+//
+
+Telemetry = function() {
+    var s = {
+        tmurl : "https://www.doubleoverride.net",
+        tmapi : "/dttm/game/",
+        tmobj : null,
+    };
+
+    var evnt = {
+        START     : "START",
+        PAUSE     : "PAUSE",
+        RESUME    : "RESUME",
+        END       : "END",
+        PEQUAL    : "PEQUAL",
+        P1BEHIND  : "P1BEHIND",
+        P1VBEHIND : "P1VBEHIND",
+        P2BEHIND  : "P2BEHIND",
+        P2VBEHIND : "P2VBEHIND",
+        P1LOST    : "P1LOST",
+        P2LOST    : "P2LOST",
+        DRAW      : "DRAW",
+        P1TOP2    : "P1TOP2",
+        P2TOP1    : "P2TOP1",
+    };
+
+    var me = {};
+
+    function create_new_game(diff_limit, max_limit) {
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', s.tmurl + s.tmapi, false);
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        var data = {
+            "difflimit": diff_limit,
+            "maxlimit": max_limit,
+        };
+        xhr.send(JSON.stringify(data));
+        if (xhr.status === 200) {
+            s.tmobj = JSON.parse(xhr.responseText);
+            return true;
+        } else {
+            console.log("Error: " + xhr.status);
+            console.log(xhr);
+            s.tmobj = null;
+            return false;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      return false;
+    }
+
+    me.init = function(diff_limit, max_limit) {
+        if (!create_new_game(diff_limit, max_limit)) {
+            console.log("Telemetry: Failed to create a new game object!");
+        }
+    };
+
+    function log_event(evt) {
+      if (!s.tmobj) {
+        return false;
+      }
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', s.tmobj.event, evt != evnt.END);
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        var data = {
+            "event": evt,
+        };
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 ) {
+                if (this.status != 200) {
+                    console.log("Error: " + this.status);
+                    console.log(this);
+                    s.tmobj = null;
+                }
+            }
+        };
+        xhr.send(JSON.stringify(data));
+        return true;
+      } catch (err) {
+        console.log(err);
+      }
+      return false;
+    };
+
+    me.start = function() {
+        log_event(evnt.START);
+    };
+
+    me.end = function() {
+        log_event(evnt.END);
+        s.tmobj = null;
+    };
+
+    me.pause = function() {
+        log_event(evnt.PAUSE);
+    };
+
+    me.resume = function() {
+        log_event(evnt.RESUME);
+    };
+
+    me.equal = function() {
+        log_event(evnt.PEQUAL);
+    };
+
+    me.p1_behind = function() {
+        log_event(evnt.P1BEHIND);
+    };
+
+    me.p1_very_behind = function() {
+        log_event(evnt.P1VBEHIND);
+    };
+
+    me.p2_behind = function() {
+        log_event(evnt.P2BEHIND);
+    };
+
+    me.p2_very_behind = function() {
+        log_event(evnt.P2VBEHIND);
+    };
+
+    me.p1_lost = function() {
+        log_event(evnt.P1LOST);
+    };
+
+    me.p2_lost = function() {
+        log_event(evnt.P2LOST);
+    };
+
+    me.draw = function() {
+        log_event(evnt.DRAW);
+    };
+
+    me.p1_to_p2 = function() {
+        log_event(evnt.P1TOP2);
+    };
+
+    me.p2_to_p1 = function() {
+        log_event(evnt.P2TOP1);
+    };
+
+    return me;
+}
+
+//
 // Our global state.
 //
 let tstate = tstates.at_intro;
@@ -41,6 +192,9 @@ let player1_time = 0;
 let player2_time = 0;
 let current_differential = 0;
 let last_check_time = null;
+
+// The telemetry handler
+let telemetry = Telemetry();
 
 // Handle for timer callback.
 let setinterval_handle = null;
@@ -239,9 +393,11 @@ function unpause() {
 function change_tstate(target_state) {
   if (target_state == tstates.paused) {
     pause();
+    telemetry.pause();
     ds["sound-pause"].play();
   } else if (tstate == tstates.paused) {
     unpause();
+    telemetry.resume();
     ds["sound-unpause"].play();
   } else if (target_state == tstates.select_delta) {
     hide(ds["intro-screen"]);
@@ -250,10 +406,16 @@ function change_tstate(target_state) {
     hide(ds["menu-select-delta"]);
     reveal(ds["menu-select-max"]);
   } else if (target_state == tstates.waiting_for_first_move) {
+    if (no_max) {
+        telemetry.init(diff_limit_ms/1000, 0);
+    } else {
+        telemetry.init(diff_limit_ms/1000, max_limit_ms/1000);
+    }
     hide(ds["intro-screen"]);
     hide(ds["menu-select-delta"]);
     hide(ds["menu-select-max"]);
     reveal(ds["timer-view"]);
+    telemetry.start();
   } else if (target_state == tstates.player1_active) {
     ds["player2-button"].classList.remove("active-player");
     ds["player1-button"].classList.remove("waiting-player");
@@ -261,6 +423,7 @@ function change_tstate(target_state) {
     ds["player1-button"].classList.add("active-player");
     ds["sound-tock"].play();
     update_times();
+    telemetry.p2_to_p1();
   } else if (target_state == tstates.player2_active) {
     ds["player1-button"].classList.remove("active-player");
     ds["player2-button"].classList.remove("waiting-player");
@@ -268,6 +431,7 @@ function change_tstate(target_state) {
     ds["player2-button"].classList.add("active-player");
     ds["sound-tock"].play();
     update_times();
+    telemetry.p1_to_p2();
   } else if (target_state == tstates.times_up) {
     clearInterval(setinterval_handle);
     ds["sound-times-up"].play();
@@ -284,16 +448,37 @@ function change_tstate(target_state) {
 function change_dstate(target_state) {
   if (target_state == dstates.players_equal) {
     show_players_equal();
+    if (target_state != dstate) {
+      telemetry.equal();
+    }
   } else if (target_state == dstates.player1_behind) {
     show_player1_behind();
+    if (target_state != dstate) {
+      telemetry.p1_behind();
+    }
   } else if (target_state == dstates.player2_behind) {
     show_player2_behind();
+    if (target_state != dstate) {
+      telemetry.p2_behind();
+    }
   } else if (target_state == dstates.player1_lost) {
+    if (target_state != dstate) {
+      telemetry.p1_lost();
+    }
     show_player1_lost();
+    telemetry.end();
   } else if (target_state == dstates.player2_lost) {
+    if (target_state != dstate) {
+      telemetry.p2_lost();
+    }
     show_player2_lost();
+    telemetry.end();
   } else if (target_state == dstates.players_drew) {
+    if (target_state != dstate) {
+      telemetry.draw();
+    }
     show_players_drew();
+    telemetry.end();
   }
   prev_dstate = dstate;
   dstate = target_state;
@@ -354,6 +539,7 @@ function player2_button_listener(e) {
 }
 
 function restart_button_listener(e) {
+  telemetry.end();
   location.reload();
 }
 
