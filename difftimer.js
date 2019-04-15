@@ -492,7 +492,7 @@ function intro_button_listener(e) {
   if (id_string == "intro-select-custom") {
     change_tstate(tstates.select_delta);
   } else if (id_string == "intro-select-tournament") {
-    diff_limit_ms = 180 * 1000;
+    diff_limit_ms = 120 * 1000;
     no_max = true;
     change_tstate(tstates.waiting_for_first_move);
     change_dstate(dstates.players_equal);
